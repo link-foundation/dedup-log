@@ -1,6 +1,6 @@
 {
   "name": "dedup-log",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Lazy logger that rotates per day and deduplicates closed logs into Lino .log.lino files",
   "type": "module",
   "main": "src/index.js",
