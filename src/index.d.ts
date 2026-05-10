@@ -96,7 +96,11 @@ export declare function formatDictionary(
 ): string;
 
 export declare class FileSink {
-  constructor(options: { dir: string; now?: () => Date; onRotate?: (date: string) => void });
+  constructor(options: {
+    dir: string;
+    now?: () => Date;
+    onRotate?: (date: string) => void;
+  });
   write(line: string): void;
   close(): void;
   flush(): void;
