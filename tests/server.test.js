@@ -60,6 +60,7 @@ describe('dedup-log HTTP server', () => {
         ]),
       });
       expect(post.status).toBe(202);
+      await post.body?.cancel();
       const list = await (await fetch(`${baseUrl(server)}/logs`)).json();
       expect(Array.isArray(list)).toBe(true);
       expect(list.length).toBe(1);
@@ -76,16 +77,18 @@ describe('dedup-log HTTP server', () => {
     const dir = tempDir('rotate');
     const server = await start({ dir });
     try {
-      await fetch(`${baseUrl(server)}/log`, {
+      const w1 = await fetch(`${baseUrl(server)}/log`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ message: 'repeat' }),
       });
-      await fetch(`${baseUrl(server)}/log`, {
+      await w1.body?.cancel();
+      const w2 = await fetch(`${baseUrl(server)}/log`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ message: 'repeat' }),
       });
+      await w2.body?.cancel();
 
       const today = fs
         .readdirSync(dir)
@@ -115,6 +118,7 @@ describe('dedup-log HTTP server', () => {
     try {
       const res = await fetch(`${baseUrl(server)}/no-such-route`);
       expect(res.status).toBe(404);
+      await res.body?.cancel();
     } finally {
       await stop(server);
     }
@@ -133,6 +137,7 @@ describe('dedup-log HTTP server', () => {
         body: JSON.stringify({ level: 'nope', message: 'x' }),
       });
       expect(res.status).toBe(400);
+      await res.body?.cancel();
     } finally {
       await stop(server);
     }
