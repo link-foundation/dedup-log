@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>dedup-log — interactive demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>dedup-log</h1>
+      <p class="lead">
+        Lazy daily logger that deduplicates closed logs into the
+        <a
+          href="https://github.com/linksplatform/Protocols.Lino"
+          target="_blank"
+          rel="noopener"
+          >Lino</a
+        >
+        <code>.log.lino</code> format.
+      </p>
+      <nav>
+        <a
+          href="https://github.com/link-foundation/dedup-log"
+          target="_blank"
+          rel="noopener"
+          >GitHub</a
+        >
+        <span class="sep">·</span>
+        <a
+          href="https://www.npmjs.com/package/dedup-log"
+          target="_blank"
+          rel="noopener"
+          >npm</a
+        >
+        <span class="sep">·</span>
+        <a
+          href="https://github.com/link-foundation/dedup-log/issues/1"
+          target="_blank"
+          rel="noopener"
+          >Issue&nbsp;#1</a
+        >
+      </nav>
+    </header>
+
+    <main>
+      <section>
+        <h2>Try it in your browser</h2>
+        <p>
+          The demo runs the deduplication post-processor entirely client-side
+          using a small JavaScript port of the algorithm — no server, no network
+          calls. Paste sample log lines, then click
+          <strong>Deduplicate</strong> to see the resulting Lino dictionary.
+        </p>
+
+        <div class="grid">
+          <div class="cell">
+            <label for="input">Raw log (one entry per line)</label>
+            <textarea id="input" spellcheck="false" rows="14"></textarea>
+            <div class="row">
+              <button id="run">Deduplicate</button>
+              <button id="reset" class="ghost">Reset sample</button>
+              <label class="threshold">
+                Threshold
+                <input
+                  id="threshold"
+                  type="number"
+                  min="1"
+                  step="1"
+                  value="2"
+                />
+                <small>min repetitions to extract a pattern</small>
+              </label>
+            </div>
+          </div>
+          <div class="cell">
+            <label for="output">Lino output</label>
+            <textarea
+              id="output"
+              spellcheck="false"
+              rows="14"
+              readonly
+            ></textarea>
+            <div class="stats" id="stats"></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>How it works</h2>
+        <ol>
+          <li>
+            <code>createDedupLog({ dir })</code> writes UTC-dated
+            <code>YYYY-MM-DD.log</code> files via
+            <a
+              href="https://www.npmjs.com/package/log-lazy"
+              target="_blank"
+              rel="noopener"
+              >log-lazy</a
+            >’s lazy-evaluation interface.
+          </li>
+          <li>
+            On the first write of a new UTC day, the previous file is closed and
+            <a
+              href="https://www.npmjs.com/package/deduplino"
+              target="_blank"
+              rel="noopener"
+              >deduplino</a
+            >
+            collapses repeated fragments into a local Lino dictionary, producing
+            <code>YYYY-MM-DD.log.lino</code>.
+          </li>
+          <li>
+            After more than seven days of history, a global
+            <code>dictionary.log.lino</code> is built from the union and each
+            daily file references it via
+            <code>(import dictionary "./dictionary.log.lino")</code>.
+          </li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>Install</h2>
+        <pre><code>npm install dedup-log</code></pre>
+        <pre><code>import { createDedupLog } from 'dedup-log';
+
+const log = createDedupLog({ dir: './logs', level: 'info' });
+log(() =&gt; `request handled in ${ms}ms`);   // lazy evaluation
+log.close();</code></pre>
+      </section>
+    </main>
+
+    <footer>
+      Built by
+      <a
+        href="https://github.com/link-foundation"
+        target="_blank"
+        rel="noopener"
+        >Link Foundation</a
+      >. Released under the
+      <a href="https://unlicense.org" target="_blank" rel="noopener"
+        >Unlicense</a
+      >.
+    </footer>
+
+    <script type="module" src="./demo.js"></script>
+  </body>
+</html>
