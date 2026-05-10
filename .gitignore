@@ -143,3 +143,6 @@ reports/
 
 # Playwright MCP tooling artifacts (used during development)
 .playwright-mcp/
+
+# Deno lockfile (generated when running `deno test`; not the source of truth)
+deno.lock
