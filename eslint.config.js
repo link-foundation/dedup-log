@@ -20,6 +20,8 @@ export default [
         Buffer: 'readonly',
         __dirname: 'readonly',
         __filename: 'readonly',
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
         // Node.js 18+ globals
         fetch: 'readonly',
         AbortController: 'readonly',
@@ -78,6 +80,17 @@ export default [
     files: ['tests/**/*.js', '**/*.test.js'],
     rules: {
       'require-await': 'off', // Async functions without await are common in tests
+    },
+  },
+  {
+    // Browser-only static demo
+    files: ['docs/demo/**/*.js'],
+    languageOptions: {
+      globals: {
+        document: 'readonly',
+        window: 'readonly',
+        Blob: 'readonly',
+      },
     },
   },
   {

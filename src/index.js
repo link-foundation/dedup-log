@@ -1,28 +1,32 @@
 /**
- * Example module entry point
- * Replace this with your actual implementation
+ * dedup-log — lazy daily logger that deduplicates closed logs into the
+ * Lino `.log.lino` format.
+ *
+ * Public surface:
+ *   - createDedupLog({ dir, level, ... })  → log-lazy LogFunction with
+ *     daily-file rotation and a Lino dedup pipeline.
+ *   - rotate({ dir, date, ... })           → Run deduplino on one
+ *     closed log and emit `<date>.log.lino`.
+ *   - buildGlobalDictionary({ dir, ... })  → Promote frequent fragments
+ *     into `<dir>/dictionary.log.lino` once enough history exists.
+ *   - FileSink                             → Daily-rotating sink building
+ *     block usable on its own.
+ *   - splitDictionary, formatDictionary    → Lino dictionary helpers.
+ *   - paths                                → Path layout helpers.
  */
-
-/**
- * Example function that adds two numbers
- * @param {number} a - First number
- * @param {number} b - Second number
- * @returns {number} Sum of a and b
- */
-export const add = (a, b) => a + b;
-
-/**
- * Example function that multiplies two numbers
- * @param {number} a - First number
- * @param {number} b - Second number
- * @returns {number} Product of a and b
- */
-export const multiply = (a, b) => a * b;
-
-/**
- * Example async function
- * @param {number} ms - Milliseconds to wait
- * @returns {Promise<void>}
- */
-export const delay = (ms) =>
-  new Promise((resolve) => globalThis.setTimeout(resolve, ms));
+export { createDedupLog, levels } from './logger.js';
+export {
+  rotate,
+  buildGlobalDictionary,
+  splitDictionary,
+  formatDictionary,
+} from './deduplicate-file.js';
+export { FileSink } from './file-sink.js';
+export {
+  formatDate,
+  parseDate,
+  dayDiff,
+  logPath,
+  linoPath,
+  dictionaryPath,
+} from './paths.js';
