@@ -306,7 +306,11 @@ jobs:
 
       - name: Run tests (Deno)
         if: matrix.runtime == 'deno'
-        run: deno test --allow-read
+        # dedup-log tests need to write under os.tmpdir() (env access on
+        # Windows), spawn the CLI (run), bind a random local port (net),
+        # and locate the deduplino binary (sys, env). --allow-all matches
+        # the trust level that Node and Bun get implicitly.
+        run: deno test --allow-all
 
   # === DOCUMENTATION VALIDATION ===
   # Validate documentation files when docs change (hive-mind principle #12)
